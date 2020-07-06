@@ -5,16 +5,30 @@ import {toStr} from '/lib/util';
 
 const INDEX_CONFIG = {
 	default: {
-		decideByType: false, // Let's explicitly index everything the same
-		enabled: true,
-		nGram: true,
-		fulltext: true, // Needed for stemming?
-		includeInAllText: true, // Needed for stemming?
+		decideByType: false,
+		enabled: false,
+		nGram: false,
+		fulltext: false, // Needed for stemming?
+		includeInAllText: false, // Needed for stemming?
 		path: false, // Is this needed for _name ? WARNING true is not reflected!
 		indexValueProcessors: [], // TODO Needed for stemming?
-		languages: ['no-NO'],
-		stemmed: true
-	}
+		languages: [],
+		stemmed: false
+	},
+	configs: [{
+		path: 'displayName',
+		config: {
+			decideByType: false,
+			enabled: true,
+			nGram: true,
+			fulltext: true,
+			includeInAllText: true,
+			path: false,
+			indexValueProcessors: [],
+			languages: ['no-NO'],
+			stemmed: true
+		}
+	}]
 };
 
 const PERMISSIONS = [{
@@ -71,9 +85,9 @@ run({
 		_indexConfig: INDEX_CONFIG,
 		_inheritsPermissions: true,
 		_name: 'havnedistriktene',
-		_path: '/'//,
+		_path: '/',
 		//_permissions: PERMISSIONS,
-		//displayName: 'Havnedistriktene' // Adding this fails without any error
+		displayName: 'Havnedistriktene' // Adding this fails without any error
 	};
 	log.info(`createNodeParams:${toStr(createNodeParams)}`);
 	connection.create(createNodeParams);
