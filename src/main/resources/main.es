@@ -17,6 +17,20 @@ const INDEX_CONFIG = {
 	}
 };
 
+const PERMISSIONS = [{
+	principal: 'role:system.admin',
+	allow: [
+		'READ',
+		'CREATE',
+		'MODIFY',
+		'DELETE',
+		'PUBLISH',
+		'READ_PERMISSIONS',
+		'WRITE_PERMISSIONS'
+	],
+	deny: []
+}];
+
 run({
 	repository: app.name,
 	branch: 'master',
@@ -24,19 +38,7 @@ run({
 }, () => {
 	const createRepoParams = {
 		id: app.name,
-		rootPermissions: [{
-			principal: 'role:system.admin',
-			allow: [
-				'READ',
-				'CREATE',
-				'MODIFY',
-				'DELETE',
-				'PUBLISH',
-				'READ_PERMISSIONS',
-				'WRITE_PERMISSIONS'
-			],
-			deny: []
-		}]/*, // WARNING This does not seem to work!
+		rootPermissions: PERMISSIONS/*, // WARNING This does not seem to work!
 		settings: {
 			definitions: {
 				branch: {
@@ -66,9 +68,11 @@ run({
 	const connection = connect(connectParams);
 
 	const createNodeParams = {
+		_indexConfig: INDEX_CONFIG,
+		_inheritsPermissions: true,
 		_name: 'havnedistriktene',
-		_path: '/',
-		_indexConfig: INDEX_CONFIG//,
+		_path: '/'//,
+		//_permissions: PERMISSIONS,
 		//displayName: 'Havnedistriktene' // Adding this fails without any error
 	};
 	log.info(`createNodeParams:${toStr(createNodeParams)}`);
