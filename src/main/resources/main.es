@@ -70,5 +70,5 @@ run({
 		log.info(`queryParams:${toStr(queryParams)}`);
 		const res = connection.query(queryParams);
 		log.info(`res:${toStr(res)}`);
-	});
-});
+	}); // foreach
+}); // context.run
