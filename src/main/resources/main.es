@@ -107,6 +107,7 @@ function task() {
 			_inheritsPermissions: true,
 			_name: 'node',
 			_path: '/',
+			lang: LANG, // Trying to see if this triggers creation of _alltext._stemmed_no: NOPE!
 			[PROPERTY]: 'havnedistriktene'//,
 			//_permissions: PERMISSIONS,
 			//displayName: 'Havnedistriktene' // Adding this fails without any error
