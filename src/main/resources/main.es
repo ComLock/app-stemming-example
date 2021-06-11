@@ -4,21 +4,38 @@ import {connect} from '/lib/xp/node';
 import {create as createRepo} from '/lib/xp/repo';
 import {submit} from '/lib/xp/task';
 
+const LANG = 'no';
+const PROPERTY = 'property';
+
 function task() {
 	const INDEX_CONFIG = {
 		default: {
 			decideByType: false,
 			enabled: true,
-			nGram: true,
-			fulltext: true, // Needed for stemming?
-			includeInAllText: true, // Needed for stemming?
-			path: false, // Is this needed for _name ? WARNING true is not reflected!
-			indexValueProcessors: [], // TODO Needed for stemming?
-			languages: ['no'],
-			stemmed: true // Not reflected in node
-		}/*,
+			nGram: false,
+			fulltext: false, // Needed for stemming?
+			includeInAllText: false, // Needed for stemming?
+			path: false//, // Is this needed for _name ? WARNING true is not reflected!
+			//indexValueProcessors: [], // TODO Needed for stemming?
+			//languages: [LANG],
+			//stemmed: true // Not reflected in node
+		},
 		configs: [{
+			// Not possible to stem _name
 			path: '_name',
+			config: {
+				decideByType: false,
+				enabled: true,
+				nGram: false,
+				fulltext: false,
+				includeInAllText: false,
+				path: false//,
+				//indexValueProcessors: [],
+				//languages: [LANG],
+				//stemmed: true // Not reflected in node
+			}
+		}, {
+			path: PROPERTY,
 			config: {
 				decideByType: false,
 				enabled: true,
@@ -27,10 +44,10 @@ function task() {
 				includeInAllText: true,
 				path: false,
 				indexValueProcessors: [],
-				languages: ['no'],
+				languages: [LANG], // Reflected in node :)
 				stemmed: true // Not reflected in node
 			}
-		}]*/
+		}]
 	};
 
 	const PERMISSIONS = [{
@@ -90,8 +107,9 @@ function task() {
 		const createNodeParams = {
 			_indexConfig: INDEX_CONFIG,
 			_inheritsPermissions: true,
-			_name: 'havnedistriktene',
-			_path: '/'//,
+			_name: 'node',
+			_path: '/',
+			[PROPERTY]: 'havnedistriktene'//,
 			//_permissions: PERMISSIONS,
 			//displayName: 'Havnedistriktene' // Adding this fails without any error
 		};
@@ -111,7 +129,8 @@ function task() {
 			'havnedistriktets', // Other stemming
 		].forEach((word) => {
 			const queryParams = {
-				query: `stemmed('_allText', '${word}', 'OR', 'no')`
+				//query: `stemmed('_allText', '${word}', 'OR', '${LANG}')`
+				query: `stemmed('${PROPERTY}', '${word}', 'OR', '${LANG}')`
 			};
 			const res = connection.query(queryParams);
 			log.info(`queryParams:${toStr(queryParams)}\nres:${toStr(res)}`);
