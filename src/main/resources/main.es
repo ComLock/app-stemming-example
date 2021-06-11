@@ -15,10 +15,10 @@ function task() {
 			nGram: false,
 			fulltext: false, // Needed for stemming?
 			includeInAllText: false, // Needed for stemming?
-			path: false//, // Is this needed for _name ? WARNING true is not reflected!
-			//indexValueProcessors: [], // TODO Needed for stemming?
-			//languages: [LANG],
-			//stemmed: true // Not reflected in node
+			path: false, // Is this needed for _name ? WARNING true is not reflected!
+			indexValueProcessors: [], // TODO Needed for stemming?
+			languages: [LANG], // Needs to set LANG on default to work elsewhere?
+			stemmed: true // Not reflected in node
 		},
 		configs: [{
 			// Not possible to stem _name
@@ -40,7 +40,7 @@ function task() {
 				decideByType: false,
 				enabled: true,
 				nGram: true,
-				fulltext: true,
+				fulltext: true, // Must be false? Nah, didn't help
 				includeInAllText: true,
 				path: false,
 				indexValueProcessors: [],
@@ -115,10 +115,18 @@ function task() {
 		};
 		log.info(`createNodeParams:${toStr(createNodeParams)}`);
 		try {
+			connection.delete(createNodeParams);
+		} catch (e) {
+			log.error(`e:${toStr(e)}`);
+		}
+		try {
 			connection.create(createNodeParams);
 		} catch (e) {
 			log.error(`e:${toStr(e)}`);
 		}
+
+		// Refresh the index for the current repoConnection. The index has two parts, search and storage. It is possible to index both or just one of them.
+		connection.refresh();
 
 		[
 			'ha', // Ngram test
