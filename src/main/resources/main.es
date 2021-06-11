@@ -5,6 +5,7 @@ import {create as createRepo} from '/lib/xp/repo';
 import {submit} from '/lib/xp/task';
 
 const LANG = 'no';
+const ALL_TEXT = '_allText'; // _alltext // Uncertain about lowercase or uppercase T. Neither works.
 const PROPERTY = 'property';
 
 function task() {
@@ -15,10 +16,9 @@ function task() {
 			nGram: false,
 			fulltext: false, // Needed for stemming?
 			includeInAllText: false, // Needed for stemming?
-			path: false, // Is this needed for _name ? WARNING true is not reflected!
-			indexValueProcessors: [], // TODO Needed for stemming?
-			languages: [LANG], // Needs to set LANG on default to work elsewhere?
-			stemmed: true // Not reflected in node
+			path: false//, // Is this needed for _name ? WARNING true is not reflected!
+			//indexValueProcessors: [], // TODO Needed for stemming?
+			//languages: [LANG] // Needs to set LANG on default to work elsewhere?
 		},
 		configs: [{
 			// Not possible to stem _name
@@ -31,8 +31,7 @@ function task() {
 				includeInAllText: false,
 				path: false//,
 				//indexValueProcessors: [],
-				//languages: [LANG],
-				//stemmed: true // Not reflected in node
+				//languages: [LANG]
 			}
 		}, {
 			path: PROPERTY,
@@ -44,8 +43,7 @@ function task() {
 				includeInAllText: true,
 				path: false,
 				indexValueProcessors: [],
-				languages: [LANG], // Reflected in node :)
-				stemmed: true // Not reflected in node
+				languages: [LANG] // Reflected in node :)
 			}
 		}]
 	};
@@ -136,24 +134,41 @@ function task() {
 			'havnedistriktet', // Other stemming
 			'havnedistriktets', // Other stemming
 		].forEach((word) => {
-			const queryParams = {
-				//query: `stemmed('_allText', '${word}', 'OR', '${LANG}')`
+			const queryParams1 = {
 				query: `stemmed('${PROPERTY}', '${word}', 'OR', '${LANG}')`
 			};
-			const res = connection.query(queryParams);
-			log.info(`queryParams:${toStr(queryParams)}\nres:${toStr(res)}`);
+			const res1 = connection.query(queryParams1);
+			log.info(`queryParams1:${toStr(queryParams1)}\nres1:${toStr(res1)}`);
 
-			/*const queryParams2 = {
-				query: `fulltext('_allText', '${word}')`
+			const queryParams2 = {
+				query: `fulltext('${PROPERTY}', '${word}', 'OR')`
 			};
 			const res2 = connection.query(queryParams2);
 			log.info(`queryParams2:${toStr(queryParams2)}\nres2:${toStr(res2)}`);
 
 			const queryParams3 = {
-				query: `ngram('_allText', '${word}')`
+				query: `ngram('${PROPERTY}', '${word}', 'OR')`
 			};
 			const res3 = connection.query(queryParams3);
-			log.info(`queryParams3:${toStr(queryParams3)}\nres3:${toStr(res3)}`);*/
+			log.info(`queryParams3:${toStr(queryParams3)}\nres3:${toStr(res3)}`);
+
+			const queryParams4 = {
+				query: `stemmed('${ALL_TEXT}', '${word}', 'OR', '${LANG}')`
+			};
+			const res4 = connection.query(queryParams4);
+			log.info(`queryParams4:${toStr(queryParams4)}\nres4:${toStr(res4)}`);
+
+			const queryParams5 = {
+				query: `fulltext('${ALL_TEXT}', '${word}', 'OR')`
+			};
+			const res5 = connection.query(queryParams5);
+			log.info(`queryParams5:${toStr(queryParams5)}\nres5:${toStr(res5)}`);
+
+			const queryParams6 = {
+				query: `ngram('${ALL_TEXT}', '${word}', 'OR')`
+			};
+			const res6 = connection.query(queryParams6);
+			log.info(`queryParams6:${toStr(queryParams6)}\nres6:${toStr(res6)}`);
 		}); // foreach
 	}); // context.run
 } // function runTest
